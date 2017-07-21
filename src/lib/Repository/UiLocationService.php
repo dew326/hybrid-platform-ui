@@ -11,6 +11,7 @@ use eZ\Publish\API\Repository\LocationService;
 use eZ\Publish\API\Repository\Values\Content\ContentInfo;
 use eZ\Publish\API\Repository\Values\Content\Location;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentException;
+use eZ\Publish\Core\Base\Exceptions\UnauthorizedException;
 use EzSystems\HybridPlatformUi\Repository\Permission\UiPermissionResolver;
 use EzSystems\HybridPlatformUi\Repository\Values\Content\UiLocation;
 
@@ -75,6 +76,8 @@ class UiLocationService
      * Deletes locations.
      *
      * @param array $locationIds
+     *
+     * @throws UnauthorizedException if the user is not allowed to trash a location
      */
     public function deleteLocations(array $locationIds)
     {
@@ -82,6 +85,43 @@ class UiLocationService
             $location = $this->locationService->loadLocation($locationId);
             $this->locationService->deleteLocation($location);
         }
+    }
+
+    /**
+     * Trashes locations.
+     * Returns the parent location.
+     *
+     * @param Location $location
+     *
+     * @return Location Parent location of the trashed location
+     *
+     * @throws UnauthorizedException if the user is not allowed to trash a location
+     */
+    public function trashLocation(Location $location)
+    {
+        $parentLocationId = $location->parentLocationId;
+
+        $this->locationService->deleteLocation($location);
+
+        return $this->locationService->loadLocation($parentLocationId);
+    }
+
+    /**
+     * Checks if a given location can be removed.
+     *
+     * @param Location $location
+     *
+     * @return bool true if the location can be removed
+     */
+    public function canRemoveLocation(Location $location)
+    {
+        if ($location->contentId == 1) {
+            return false;
+        }
+
+        return $allowedToRemove = $this->permissionResolver->canRemoveContent(
+            $location->getContentInfo(), $location
+        );
     }
 
     /**

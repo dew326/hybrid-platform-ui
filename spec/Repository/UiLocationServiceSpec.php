@@ -108,6 +108,68 @@ class UiLocationServiceSpec extends ObjectBehavior
         $this->deleteLocations([$deleteLocationId]);
     }
 
+    function it_trashes_a_single_location_and_returns_the_parent(LocationService $locationService)
+    {
+        $locationId = 333;
+        $parentLocationId = 222;
+
+        $location = new Location([
+            'id' => $locationId,
+            'parentLocationId' => $parentLocationId,
+        ]);
+
+        $parentLocation = new Location([
+            'id' => $parentLocationId,
+        ]);
+
+        $locationService->deleteLocation($location)->shouldBeCalled();
+        $locationService->loadLocation($parentLocationId)->willReturn($parentLocation);
+
+        $this->trashLocation($location)->shouldBeLike($parentLocation);
+    }
+
+    function it_tells_if_a_location_can_not_be_removed_because_it_is_the_root()
+    {
+        $contentInfo = new ContentInfo(['id' => 1]);
+
+        $location = new Location([
+            'id' => 111,
+            'contentInfo' => $contentInfo,
+        ]);
+
+        $this->canRemoveLocation($location)->shouldReturn(false);
+    }
+
+    function it_tells_if_a_location_can_not_be_removed_because_user_is_not_allowed(
+        UiPermissionResolver $permissionResolver
+    ) {
+        $contentInfo = new ContentInfo(['id' => 110]);
+
+        $location = new Location([
+            'id' => 111,
+            'contentInfo' => $contentInfo,
+        ]);
+
+        $permissionResolver->canRemoveContent($contentInfo, $location)->willReturn(false);
+
+        $this->canRemoveLocation($location)->shouldReturn(false);
+    }
+
+    function it_tells_if_a_location_be_removed(
+        UiPermissionResolver $permissionResolver
+    ) {
+        $contentInfo = new ContentInfo(['id' => 110]);
+
+        $location = new Location([
+            'id' => 111,
+            'contentInfo' => $contentInfo,
+        ]);
+
+        $permissionResolver->canRemoveContent($contentInfo, $location)->willReturn(true);
+
+        $this->canRemoveLocation($location)->shouldReturn(true);
+    }
+
     function it_loads_ui_locations_with_user_access_flags(
         LocationService $locationService,
         UiPermissionResolver $permissionResolver
