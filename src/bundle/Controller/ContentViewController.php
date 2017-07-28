@@ -8,6 +8,7 @@
  */
 namespace EzSystems\HybridPlatformUiBundle\Controller;
 
+use eZ\Publish\API\Repository\LocationService;
 use eZ\Publish\Core\MVC\Symfony\View\ContentView;
 use EzSystems\HybridPlatformUi\Form\UiFormFactory;
 use EzSystems\HybridPlatformUi\Repository\UiFieldGroupService;
@@ -32,12 +33,19 @@ class ContentViewController extends TabController
      */
     private $uiLocationService;
 
+    /**
+     * @var LocationService
+     */
+    private $locationService;
+
     public function __construct(
         UiFormFactory $formFactory,
-        UiLocationService $uiLocationService
+        UiLocationService $uiLocationService,
+        LocationService $locationService
     ) {
         $this->formFactory = $formFactory;
         $this->uiLocationService = $uiLocationService;
+        $this->locationService = $locationService;
     }
 
     public function locationViewAction(
@@ -47,8 +55,9 @@ class ContentViewController extends TabController
     ) {
         $contentTypeParameterSupplier->supply($view);
         $locationParameterSupplier->supply($view);
+        $location = $view->getLocation();
 
-        $disabled = !$this->uiLocationService->canRemoveLocation($view->getLocation());
+        $disabled = !$this->uiLocationService->canRemoveLocation($location);
 
         $trashLocationsForm = $this->formFactory->createLocationsContentTrashForm(
             $disabled
@@ -56,6 +65,7 @@ class ContentViewController extends TabController
 
         $view->addParameters([
             'trashLocationsForm' => $trashLocationsForm->createView(),
+            'childCount' => $this->locationService->getLocationChildCount($location),
         ]);
 
         return $view;
