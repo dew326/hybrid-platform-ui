@@ -42,7 +42,7 @@ class ActionBarController extends Controller
         $trashLocationsForm->handleRequest($request);
 
         if ($trashLocationsForm->isValid()) {
-            $redirectLocation = $this->uiLocationService->trashLocation($location);
+            $redirectLocation = $this->uiLocationService->trashLocationAndReturnParent($location);
         }
 
         return $this->redirectToRoute($redirectLocation);

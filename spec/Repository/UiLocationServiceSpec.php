@@ -125,7 +125,7 @@ class UiLocationServiceSpec extends ObjectBehavior
         $locationService->deleteLocation($location)->shouldBeCalled();
         $locationService->loadLocation($parentLocationId)->willReturn($parentLocation);
 
-        $this->trashLocation($location)->shouldBeLike($parentLocation);
+        $this->trashLocationAndReturnParent($location)->shouldBeLike($parentLocation);
     }
 
     function it_tells_if_a_location_can_not_be_removed_because_it_is_the_root()

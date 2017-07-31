@@ -97,7 +97,7 @@ class UiLocationService
      *
      * @throws UnauthorizedException if the user is not allowed to trash a location
      */
-    public function trashLocation(Location $location)
+    public function trashLocationAndReturnParent(Location $location)
     {
         $parentLocationId = $location->parentLocationId;
 
