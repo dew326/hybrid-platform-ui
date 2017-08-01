@@ -67,7 +67,7 @@
 
     <ez-toolbar class="ez-action-bar" visible>
         {% block content_action_toolbar %}
-            {{ form_start(trashLocationsForm, {"action": path("ez_hybrid_platform_ui_location_trash_location", {'contentId': content.id, 'locationId': locationId})}) }}
+            {{ form_start(trashLocationForm, {"action": path("ez_hybrid_platform_ui_location_trash_location", {'contentId': content.id, 'locationId': locationId})}) }}
                 {% set sendToTrashDialogId = 'confirm-send-to-trash' %}
 
                 {% if childCount == 0 %}
@@ -80,15 +80,15 @@
                     include('@EzSystemsHybridPlatformUi/components/confirm_delete_dialog.html.twig', {
                         'dialogId': sendToTrashDialogId,
                         'message': sendToTrashDialogMsg,
-                        'confirmButton': trashLocationsForm.trash,
+                        'confirmButton': trashLocationForm.trash,
                     })
                 }}
 
                 <button type="button" value="#{{ sendToTrashDialogId }}" class="ez-button ez-button-action ez-js-open-modal"
-                    {% if trashLocationsForm.trash.vars.disabled %}disabled{% endif %}>
+                    {% if trashLocationForm.trash.vars.disabled %}disabled{% endif %}>
                     {{ 'actionbar.trash'|trans|desc('Send to Trash')}}
                 </button>
-            {{ form_end(trashLocationsForm) }}
+            {{ form_end(trashLocationForm) }}
         {% endblock %}
     </ez-toolbar>
     {% endblock %}

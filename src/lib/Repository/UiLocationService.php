@@ -8,6 +8,7 @@ namespace EzSystems\HybridPlatformUi\Repository;
 
 use eZ\Publish\API\Repository\ContentTypeService;
 use eZ\Publish\API\Repository\LocationService;
+use eZ\Publish\API\Repository\TrashService;
 use eZ\Publish\API\Repository\Values\Content\ContentInfo;
 use eZ\Publish\API\Repository\Values\Content\Location;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentException;
@@ -26,6 +27,9 @@ class UiLocationService
      */
     private $locationService;
 
+    /** @var  TrashService */
+    private $trashService;
+
     /**
      * @var PathService
      */
@@ -43,11 +47,13 @@ class UiLocationService
 
     public function __construct(
         LocationService $locationService,
+        TrashService $trashService,
         PathService $pathService,
         UiPermissionResolver $permissionResolver,
         ContentTypeService $contentTypeService
     ) {
         $this->locationService = $locationService;
+        $this->trashService = $trashService;
         $this->pathService = $pathService;
         $this->permissionResolver = $permissionResolver;
         $this->contentTypeService = $contentTypeService;
@@ -101,7 +107,7 @@ class UiLocationService
     {
         $parentLocationId = $location->parentLocationId;
 
-        $this->locationService->deleteLocation($location);
+        $this->trashService->trash($location);
 
         return $this->locationService->loadLocation($parentLocationId);
     }
