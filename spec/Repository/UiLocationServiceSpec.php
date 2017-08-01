@@ -119,7 +119,7 @@ class UiLocationServiceSpec extends ObjectBehavior
     function it_trashes_a_single_location_and_returns_the_parent(
         LocationService $locationService,
         TrashService $trashService
-    ){
+    ) {
         $locationId = 333;
         $parentLocationId = 222;
 

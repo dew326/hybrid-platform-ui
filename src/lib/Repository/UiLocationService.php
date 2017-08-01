@@ -27,7 +27,7 @@ class UiLocationService
      */
     private $locationService;
 
-    /** @var  TrashService */
+    /** @var TrashService */
     private $trashService;
 
     /**
