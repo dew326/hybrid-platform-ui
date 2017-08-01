@@ -47,4 +47,19 @@ class ActionBarController extends Controller
 
         return $this->redirectToRoute($redirectLocation);
     }
+
+    public function moveLocationAction(
+        Location $location,
+        Request $request
+    ) {
+        $moveLocationsForm = $this->formFactory->createLocationsContentMoveForm();
+        $moveLocationsForm->handleRequest($request);
+
+        if ($moveLocationsForm->isValid()) {
+            $newParentLocationId = $moveLocationsForm->get('newParentLocationId')->getData();
+            $location = $this->uiLocationService->moveLocation($location, $newParentLocationId);
+        }
+
+        return $this->redirectToRoute($location);
+    }
 }

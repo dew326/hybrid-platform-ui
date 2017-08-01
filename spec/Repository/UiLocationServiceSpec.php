@@ -265,4 +265,76 @@ class UiLocationServiceSpec extends ObjectBehavior
 
         $this->swapLocations($location, $newLocationId)->shouldBe($location);
     }
+
+    function it_moves_a_location(
+        LocationService $locationService,
+        ContentTypeService $contentTypeService
+    ) {
+        $currentLocationId = 1;
+        $newParentLocationId = 5;
+        $contentTypeId = 2;
+
+        $location = new Location(['id' => $currentLocationId]);
+        $contentInfo = new ContentInfo(['contentTypeId' => $contentTypeId]);
+        $newParentLocation = new Location(['id' => $newParentLocationId, 'contentInfo' => $contentInfo]);
+        $contentType = new ContentType(['isContainer' => true]);
+
+        $locationService->loadLocation($newParentLocationId)->willReturn($newParentLocation);
+
+        $contentTypeService->loadContentType($contentTypeId)->willReturn($contentType);
+
+        $locationService->moveSubtree($location, $newParentLocation)->shouldBeCalled();
+        $locationService->loadLocation($currentLocationId)->willReturn($location);
+
+        $this->moveLocation($location, $newParentLocationId)->shouldBe($location);
+    }
+
+    function it_cannot_move_a_location_to_a_parent_that_is_not_a_container(
+        LocationService $locationService,
+        ContentTypeService $contentTypeService
+    ) {
+        $currentLocationId = 1;
+        $newParentLocationId = 5;
+        $contentTypeId = 2;
+
+        $location = new Location(['id' => $currentLocationId]);
+        $contentInfo = new ContentInfo(['contentTypeId' => $contentTypeId]);
+        $newParentLocation = new Location(['id' => $newParentLocationId, 'contentInfo' => $contentInfo]);
+        $contentType = new ContentType(['isContainer' => false]);
+
+        $locationService->loadLocation($newParentLocationId)->willReturn($newParentLocation);
+
+        $contentTypeService->loadContentType($contentTypeId)->willReturn($contentType);
+
+        $locationService->moveSubtree($location, $newParentLocation)->shouldNotBeCalled();
+
+        $this->shouldThrow(InvalidArgumentException::class)->duringMoveLocation(
+            $location,
+            $newParentLocationId
+        );
+    }
+
+    function it_tells_if_a_location_can_not_be_moved_because_it_is_the_root()
+    {
+        $contentInfo = new ContentInfo(['id' => 1]);
+
+        $location = new Location([
+            'id' => 111,
+            'contentInfo' => $contentInfo,
+        ]);
+
+        $this->canMoveLocation($location)->shouldReturn(false);
+    }
+
+    function it_tells_if_a_location_can_be_moved()
+    {
+        $contentInfo = new ContentInfo(['id' => 110]);
+
+        $location = new Location([
+            'id' => 111,
+            'contentInfo' => $contentInfo,
+        ]);
+
+        $this->canMoveLocation($location)->shouldReturn(true);
+    }
 }

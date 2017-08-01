@@ -63,8 +63,12 @@ class ContentViewController extends TabController
             $trashDisabled
         );
 
+        $moveDisabled = !$this->uiLocationService->canMoveLocation($location);
+        $moveLocationForm = $this->formFactory->createLocationsContentMoveForm($moveDisabled);
+
         $view->addParameters([
             'trashLocationForm' => $trashLocationForm->createView(),
+            'moveLocationForm' => $moveLocationForm->createView(),
             'childCount' => $this->locationService->getLocationChildCount($location),
         ]);
 
