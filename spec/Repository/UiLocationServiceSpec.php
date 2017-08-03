@@ -165,7 +165,7 @@ class UiLocationServiceSpec extends ObjectBehavior
         $this->canRemoveLocation($location)->shouldReturn(false);
     }
 
-    function it_tells_if_a_location_be_removed(
+    function it_tells_if_a_location_can_be_removed(
         UiPermissionResolver $permissionResolver
     ) {
         $contentInfo = new ContentInfo(['id' => 110]);

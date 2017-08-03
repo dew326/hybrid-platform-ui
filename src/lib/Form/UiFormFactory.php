@@ -123,7 +123,7 @@ class UiFormFactory
      *
      * @return \Symfony\Component\Form\FormInterface
      */
-    public function createLocationsContentTrashForm($disabled = false)
+    public function createLocationContentTrashForm($disabled = false)
     {
         return $this->formFactory->create(
             LocationTrash::class,
