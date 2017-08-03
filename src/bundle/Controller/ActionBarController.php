@@ -52,11 +52,11 @@ class ActionBarController extends Controller
         Location $location,
         Request $request
     ) {
-        $moveLocationsForm = $this->formFactory->createLocationsContentMoveForm();
-        $moveLocationsForm->handleRequest($request);
+        $moveLocationForm = $this->formFactory->createLocationContentMoveForm();
+        $moveLocationForm->handleRequest($request);
 
-        if ($moveLocationsForm->isValid()) {
-            $newParentLocationId = $moveLocationsForm->get('newParentLocationId')->getData();
+        if ($moveLocationForm->isValid()) {
+            $newParentLocationId = $moveLocationForm->get('newParentLocationId')->getData();
             $location = $this->uiLocationService->moveLocation($location, $newParentLocationId);
         }
 

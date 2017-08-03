@@ -140,7 +140,7 @@ class UiFormFactory
      *
      * @return \Symfony\Component\Form\FormInterface
      */
-    public function createLocationsContentMoveForm($disabled = false)
+    public function createLocationContentMoveForm($disabled = false)
     {
         return $this->formFactory->create(
             LocationMove::class,
